@@ -39,7 +39,7 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(cors({
-    origin: "http://localhost:5173",
+    origin: "https://room-booking-app-frontend.onrender.com",
     methods: "GET,PUT,POST,DELETE",
     credentials: true
 }));
