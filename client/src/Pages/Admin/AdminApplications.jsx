@@ -18,7 +18,7 @@ const AdminApplications = () => {
   useEffect(() => {
     const fetchReservations = async () => {
       try {
-        const response = await fetch('http://localhost:8000/api/future-reservations');
+        const response = await fetch('https://room-booking-app-backend.onrender.com/api/future-reservations');
         const data = await response.json();
         if (data.success) {
           const rejectedReservations = data.data.filter(res => res.status === 'pending');
@@ -67,7 +67,7 @@ const AdminApplications = () => {
 
     try {
       if (newStatus === 'approved') {
-        const response = await fetch('http://localhost:8000/api/approve-request', {
+        const response = await fetch('https://room-booking-app-backend.onrender.com/api/approve-request', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -80,7 +80,7 @@ const AdminApplications = () => {
         if (!response.ok) throw new Error('Failed to approve reservation');
 
       } else if (newStatus === 'rejected') {
-        const response = await fetch('http://localhost:8000/api/rejected-request', {
+        const response = await fetch('https://room-booking-app-backend.onrender.com/api/rejected-request', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

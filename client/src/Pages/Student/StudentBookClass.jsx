@@ -46,7 +46,7 @@ const StudentBookClass = ({ user }) => {
     setLoading(true);
     try {
       const response = await axios.get(
-        `http://localhost:8000/api/available-rooms/?date=${date}&start_time=${startTime}&end_time=${endTime}`
+        `https://room-booking-app-backend.onrender.com/api/available-rooms/?date=${date}&start_time=${startTime}&end_time=${endTime}`
       );
       const data = response.data;
       if (data.success) {
@@ -108,7 +108,7 @@ const StudentBookClass = ({ user }) => {
   const handleSubmit = async () => {
     setLoading(true);
     try {
-      const uidResponse = await axios.get(`http://localhost:8000/api/user/${user.email}`);
+      const uidResponse = await axios.get(`https://room-booking-app-backend.onrender.com/api/user/${user.email}`);
       const uidData = uidResponse.data;
       if (uidData.success) {
         setUserId(uidData.data._id);
@@ -118,7 +118,7 @@ const StudentBookClass = ({ user }) => {
         return;  
       }
   
-      const roomResponse = await axios.get(`http://localhost:8000/api/room-name/${selectedRoom}`);
+      const roomResponse = await axios.get(`https://room-booking-app-backend.onrender.com/api/room-name/${selectedRoom}`);
       const roomData = roomResponse.data;
       if (roomData.success) {
         setSelectedRoomID(roomData.data._id);
@@ -142,7 +142,7 @@ const StudentBookClass = ({ user }) => {
   
       console.log("Payload:", payload);
   
-      const response = await axios.post("http://localhost:8000/api/reserve-room", payload);
+      const response = await axios.post("https://room-booking-app-backend.onrender.com/api/reserve-room", payload);
       if (response.data.success) {
         alert("Reservation Application Successfull. An email has been sent for confirmation.");
       } else {

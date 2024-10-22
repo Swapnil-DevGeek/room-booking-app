@@ -5,7 +5,7 @@ import './Login.css'
 const Login = () => {
     const googleAuth = ()=>{
         window.open(
-            `http://localhost:8000/auth/google/callback`,
+            `https://room-booking-app-backend.onrender.com/auth/google/callback`,
             "_self"
         );
     }

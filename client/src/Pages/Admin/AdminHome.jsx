@@ -8,13 +8,12 @@ const AdminHome = () => {
 
   const [pastReservations,setPastReservations] = useState([]);
   const [loading,setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(()=>{
     const fetchPastReservations = async ()=>{ 
         setLoading(true);
         try {
-          const response = await axios.get('http://localhost:8000/api/past-reservations')
+          const response = await axios.get('https://room-booking-app-backend.onrender.com/api/past-reservations')
           if (response.data.success) {
             setPastReservations(response.data.data);
           }

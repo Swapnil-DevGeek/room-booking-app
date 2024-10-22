@@ -12,7 +12,7 @@ const App = () => {
 
   const getUser = async ()=>{
     try {
-      const url = `http://localhost:8000/auth/login/success`;
+      const url = `https://room-booking-app-backend.onrender.com/auth/login/success`;
       const {data} = await axios.get(url,{withCredentials:true});
       setUser(data.user);
 

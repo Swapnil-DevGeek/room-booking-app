@@ -12,17 +12,17 @@ const StudentHome = ({ user }) => {
   useEffect(() => {
     const fetchReservations = async () => {
       try {
-        const userResponse = await axios.get(`http://localhost:8000/api/user/${user.email}`);
+        const userResponse = await axios.get(`https://room-booking-app-backend.onrender.com/api/user/${user.email}`);
         const userData = userResponse.data;
         if (userData.success) {
           const userId = userData.data;
-          const reservationsResponse = await axios.get(`http://localhost:8000/api/reservations/student/${userId._id}`);
+          const reservationsResponse = await axios.get(`https://room-booking-app-backend.onrender.com/api/reservations/student/${userId._id}`);
           const reservationData = reservationsResponse.data;
     
           if (reservationData.success) {
             const reservationsWithRoomNames = await Promise.all(
               reservationData.data.map(async (reservation) => {
-                const roomResponse = await axios.get(`http://localhost:8000/api/room/${reservation.room_id}`);
+                const roomResponse = await axios.get(`https://room-booking-app-backend.onrender.com/api/room/${reservation.room_id}`);
                 const roomData = roomResponse.data;
                 return {
                   bookingId: reservation._id,

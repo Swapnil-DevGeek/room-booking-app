@@ -23,7 +23,7 @@ const AdminManageClassrooms = () => {
     // Fetch classrooms from the API
     const fetchClassrooms = async () => {
       try {
-        const response = await fetch('http://localhost:8000/api/get-classrooms');
+        const response = await fetch('https://room-booking-app-backend.onrender.com/api/get-classrooms');
         const data = await response.json();
         if (data.success) {
           // Ensure each classroom has the required properties
@@ -68,7 +68,7 @@ const AdminManageClassrooms = () => {
       content: `Room Name: ${classroom.room_name || 'Unnamed Room'}`,
       onOk: async () => {
         try {
-          const response = await fetch('http://localhost:8000/api/delete-classroom', {
+          const response = await fetch('https://room-booking-app-backend.onrender.com/api/delete-classroom', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ classroom_id: classroom._id }),
@@ -90,7 +90,7 @@ const AdminManageClassrooms = () => {
 
   const handleEditSubmit = async () => {
     try {
-      const response = await fetch('http://localhost:8000/api/edit-classroom', {
+      const response = await fetch('https://room-booking-app-backend.onrender.com/api/edit-classroom', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -127,7 +127,7 @@ const AdminManageClassrooms = () => {
 
   const handleAddClassroom = async () => {
     try {
-      const response = await fetch('http://localhost:8000/api/add-classroom', {
+      const response = await fetch('https://room-booking-app-backend.onrender.com/api/add-classroom', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 

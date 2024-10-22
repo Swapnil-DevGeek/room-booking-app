@@ -13,7 +13,7 @@ import {
 function Navbar({user}) {
     const handleLogout = ()=> {
       window.open(
-        `http://localhost:8000/auth/logout`,
+        `https://room-booking-app-backend.onrender.com/auth/logout`,
         "_self"
       );
     }
