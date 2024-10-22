@@ -28,7 +28,7 @@ router.get(
     }),
     (req, res) => {
         // Send user data back to the client
-        res.redirect(`${process.env.CLIENT_URL}/auth/success`);
+        res.redirect(`https://room-booking-app-frontend.onrender.com/auth/success`);
     }
 );
 
@@ -39,7 +39,7 @@ router.get("/logout", (req, res, next) => {
         if (err) {
             return next(err);
         }
-        res.redirect(process.env.CLIENT_URL);
+        res.redirect('https://room-booking-app-frontend.onrender.com');
     });
 });
 
