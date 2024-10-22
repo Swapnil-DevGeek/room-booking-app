@@ -1,0 +1,86 @@
+.login-page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQXd7G_a8VikwqOSOB0V_OaE3RBC6osuCRRCA&s');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    overflow: hidden;
+    padding: 20px;
+  }
+
+  /* Glass effect card */
+  .glass-card {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 15px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    padding: 30px;
+    text-align: center;
+    width: 350px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    animation: fadeIn 1s ease-in-out;
+  }
+
+  /* Title styling */
+  .title {
+    font-size: 28px;
+    font-weight: bold;
+    margin-bottom: 25px;
+    color: #fff;
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+    letter-spacing: 1.5px;
+  }
+
+  /* Google Button */
+  .google-button {
+    background: linear-gradient(45deg, #4285F4, #34A853, #FBBC05, #EA4335);
+    background-size: 300% 300%;
+    color: white;
+    border: none;
+    padding: 12px 30px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 18px;
+    font-weight: bold;
+    transition: background-position 0.5s ease, transform 0.3s ease;
+    width: 100%;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Hover and active states */
+  .google-button:hover {
+    background-position: right center;
+    transform: translateY(-4px);
+  }
+
+  .google-button:active {
+    transform: translateY(2px);
+  }
+
+  /* Button ripple effect */
+  .google-button::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 300%;
+    height: 300%;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.5);
+    transition: transform 0.6s ease, opacity 0.6s ease;
+  }
+
+  .google-button:active::before {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
