@@ -1,19 +1,26 @@
-import React, { useEffect, useState } from 'react'
-import { Routes, Route, useNavigate } from 'react-router-dom'
-import axios from 'axios'
-import Admin from './Pages/Admin/Admin'
-import Student from './Pages/Student/Student'
-import Login from './components/LoginComponent/Login'
-import ProtectedRoute from './components/ProtectedRoute'
+import React, { useEffect, useState } from 'react';
+import { Routes, Route, useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import Admin from './Pages/Admin/Admin';
+import Student from './Pages/Student/Student';
+import Login from './components/LoginComponent/Login';
+import ProtectedRoute from './components/ProtectedRoute';
 
 const App = () => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);  // New loading state
   const navigate = useNavigate();
 
-  // Axios global configuration for including credentials with each request
-  axios.defaults.withCredentials = true;
-  axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('token')}`;
+  // Set up an Axios interceptor to set the Authorization header before each request
+  axios.interceptors.request.use((config) => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      config.headers['Authorization'] = `Bearer ${token}`;
+    }
+    return config;
+  }, (error) => {
+    return Promise.reject(error);
+  });
 
   const getUser = async () => {
     try {
@@ -34,6 +41,9 @@ const App = () => {
     } catch (error) {
       console.log(error);
       setLoading(false);  // Stop loading even if there is an error
+      if (error.response && error.response.status === 403) {
+        navigate('/'); // Redirect to login if unauthorized
+      }
     }
   };
 
