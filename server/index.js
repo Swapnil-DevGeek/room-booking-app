@@ -7,7 +7,7 @@ const session = require("express-session");
 const nodemailer = require("nodemailer");
 const passportSetup = require("./passport");
 const authRoute = require("./routes/auth");
-const MongoStore = require('connnect-mongo');
+const MongoStore = require('connect-mongo');
 
 const { dbConnect } = require('./utils/dbConnect');
 const { User } = require("./models/User");
