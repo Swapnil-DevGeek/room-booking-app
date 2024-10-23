@@ -7,7 +7,7 @@ router.get("/login/success", (req, res) => {
             error: false,
             message: "Successfully logged in",
             user: req.user,
-            redirectUrl: req.user.redirectUrl // Include redirect URL in response
+            redirectUrl: req.user.redirectUrl 
         });
     } else {
         res.status(403).json({ error: true, message: "Not Authorized" });

@@ -23,7 +23,7 @@ passport.use(
                 }
 
                 // Set redirect URL based on user role
-                profile.redirectUrl = user.role === "admin" ? "/admin" : "/student";
+                profile.redirectUrl = user.role === "admin" ? "https://room-booking-app-frontend.onrender.com/admin" : "https://room-booking-app-frontend.onrender.com/student";
 
                 profile.role = user.role;
 

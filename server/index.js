@@ -32,7 +32,11 @@ app.use(
         secret: "thunder",
         resave: false,
         saveUninitialized: true,
-        cookie: { maxAge: 24 * 60 * 60 * 1000 },
+        cookie: {
+            maxAge: 24 * 60 * 60 * 1000,
+            secure: false, // Set to true if using HTTPS
+            sameSite: 'none' // Important for cross-site cookies
+        },
     })
 );
 
@@ -41,7 +45,7 @@ app.use(passport.session());
 app.use(cors({
     origin: "https://room-booking-app-frontend.onrender.com",
     methods: "GET,PUT,POST,DELETE",
-    credentials: true
+    credentials: true // This is important for sending cookies
 }));
 app.use("/auth", authRoute);
 app.use(express.json());
