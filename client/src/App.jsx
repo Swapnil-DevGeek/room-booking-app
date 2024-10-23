@@ -2,6 +2,10 @@
 import React, { useEffect, useState } from 'react';
 import { Routes, Route, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import ProtectedRoute from './components/ProtectedRoute';
+import Student from './Pages/Student/Student';
+import Admin from './Pages/Admin/Admin';
+import Login from './components/LoginComponent/Login';
 
 const App = () => {
   const [user, setUser] = useState(null);
