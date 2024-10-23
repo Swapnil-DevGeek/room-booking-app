@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Routes,Route,Navigate, useNavigate } from 'react-router-dom'
+import { Routes, Route, useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import Admin from './Pages/Admin/Admin'
 import Student from './Pages/Student/Student'
@@ -7,14 +7,21 @@ import Login from './components/LoginComponent/Login'
 import ProtectedRoute from './components/ProtectedRoute'
 
 const App = () => {
-  const [user,setUser] = useState(null);
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);  // New loading state
   const navigate = useNavigate();
 
-  const getUser = async ()=>{
+  // Axios global configuration for including credentials with each request
+  axios.defaults.withCredentials = true;
+  axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('token')}`;
+
+  const getUser = async () => {
     try {
       const url = `https://room-booking-app-backend.onrender.com/auth/login/success`;
-      const {data} = await axios.get(url,{withCredentials:true});
+      const { data } = await axios.get(url);
+
       setUser(data.user);
+      setLoading(false);  // Stop loading when user is set
 
       // Redirect based on user role
       if (data.user) {
@@ -26,17 +33,22 @@ const App = () => {
       }
     } catch (error) {
       console.log(error);
+      setLoading(false);  // Stop loading even if there is an error
     }
-  }
+  };
 
-  useEffect(()=>{
+  useEffect(() => {
     getUser();
-  },[])
+  }, []);
+
+  // Render a loading state while the user data is being fetched
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <>
       <Routes>
-
         <Route path='/' element={<Login />} />
         <Route
           path='/admin'
@@ -53,12 +65,10 @@ const App = () => {
               <Student userDetails={user} />
             </ProtectedRoute>
           }
-        />        
-      </Routes>    
-
-
+        />
+      </Routes>
     </>
-  )
+  );
 }
 
-export default App
+export default App;
