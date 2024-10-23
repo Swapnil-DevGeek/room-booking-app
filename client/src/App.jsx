@@ -1,55 +1,62 @@
+// Frontend: App.js
 import React, { useEffect, useState } from 'react';
 import { Routes, Route, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import Admin from './Pages/Admin/Admin';
-import Student from './Pages/Student/Student';
-import Login from './components/LoginComponent/Login';
-import ProtectedRoute from './components/ProtectedRoute';
 
 const App = () => {
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);  // New loading state
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
-  // Set up an Axios interceptor to set the Authorization header before each request
+  // Add error state to handle authentication errors
+  const [authError, setAuthError] = useState(null);
+
+  // Configure axios defaults
+  axios.defaults.withCredentials = true;  // Important for handling cookies
+  
+  // Set up Axios interceptor with error handling
   axios.interceptors.request.use((config) => {
     const token = localStorage.getItem('token');
     if (token) {
       config.headers['Authorization'] = `Bearer ${token}`;
     }
+    // Add CORS credentials
+    config.withCredentials = true;
     return config;
   }, (error) => {
     return Promise.reject(error);
   });
 
+  // Add response interceptor to handle token expiration
+  axios.interceptors.response.use(
+    (response) => response,
+    (error) => {
+      if (error.response?.status === 403) {
+        localStorage.removeItem('token');
+        navigate('/');
+      }
+      return Promise.reject(error);
+    }
+  );
+
   const getUser = async () => {
     try {
       const url = `https://room-booking-app-backend.onrender.com/auth/login/success`;
       const { data } = await axios.get(url);
-
-      // Check if user data is returned
+      
       if (data.user) {
         setUser(data.user);
-        // Redirect based on user role
-        if (data.user.role === 'admin') {
-          navigate('/admin');
-        } else {
-          navigate('/student');
+        // Store token if provided
+        if (data.token) {
+          localStorage.setItem('token', data.token);
         }
-      } else {
-        // Handle case where user is not found
-        console.log("User not found, redirecting to login.");
-        navigate('/'); // Redirect to login if unauthorized
+        navigate(data.user.role === 'admin' ? '/admin' : '/student');
       }
     } catch (error) {
-      console.log("Error fetching user:", error);
-      setLoading(false);  // Stop loading even if there is an error
-      if (error.response && error.response.status === 403) {
-        console.log("Not authorized, redirecting to login.");
-        navigate('/'); // Redirect to login if unauthorized
-      }
-    }
-    finally{
+      console.error("Authentication error:", error);
+      setAuthError(error.response?.data?.message || "Authentication failed");
+      navigate('/');
+    } finally {
       setLoading(false);
     }
   };
@@ -58,13 +65,17 @@ const App = () => {
     getUser();
   }, []);
 
-  // Render a loading state while the user data is being fetched
   if (loading) {
-    return <div>Loading...</div>;
+    return <div className="flex items-center justify-center h-screen">Loading...</div>;
   }
 
   return (
     <>
+      {authError && (
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative">
+          {authError}
+        </div>
+      )}
       <Routes>
         <Route path='/' element={<Login />} />
         <Route
@@ -86,6 +97,6 @@ const App = () => {
       </Routes>
     </>
   );
-}
+};
 
 export default App;

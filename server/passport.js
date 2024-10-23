@@ -1,7 +1,7 @@
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const passport = require("passport");
 const { User } = require("./models/User");
-const express = require("express");
+const jwt = require('jsonwebtoken');
 
 passport.use(
   new GoogleStrategy(
@@ -12,21 +12,38 @@ passport.use(
       scope: ["profile", "email"],
     },
     async function (accessToken, refreshToken, profile, callback) {
-      const email = profile.emails[0].value;
-
       try {
+        const email = profile.emails[0].value;
         let user = await User.findOne({ email });
-
+        
         if (!user) {
-          // If user doesn't exist, create a new student user
-          user = new User({ email, role: "student" });
+          user = new User({ 
+            email, 
+            role: "student",
+            googleId: profile.id,
+            name: profile.displayName
+          });
           await user.save();
         }
 
-        // Set redirect URL based on user role
-        profile.redirectUrl = user.role === "admin" ? "https://room-booking-app-frontend.onrender.com/admin" : "https://room-booking-app-frontend.onrender.com/student";
-        profile.role = user.role;
+        // Generate JWT token
+        const token = jwt.sign(
+          { 
+            id: user._id,
+            email: user.email,
+            role: user.role 
+          },
+          process.env.JWT_SECRET,
+          { expiresIn: '24h' }
+        );
 
+        // Add token and redirect URL to profile
+        profile.token = token;
+        profile.redirectUrl = user.role === "admin" 
+          ? "https://room-booking-app-frontend.onrender.com/admin" 
+          : "https://room-booking-app-frontend.onrender.com/student";
+        profile.role = user.role;
+        
         callback(null, profile);
       } catch (error) {
         callback(error, null);

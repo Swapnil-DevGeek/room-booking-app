@@ -1,47 +1,62 @@
-const router = require("express").Router();
+const express = require("express");
+const router = express.Router();
 const passport = require("passport");
+const jwt = require('jsonwebtoken');
 
+// Add session middleware configuration
+router.use(session({
+  secret: process.env.SESSION_SECRET,
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    secure: process.env.NODE_ENV === 'production',
+    httpOnly: true,
+    maxAge: 24 * 60 * 60 * 1000 // 24 hours
+  }
+}));
 
 router.get("/login/success", (req, res) => {
+  if (req.isAuthenticated() && req.user) {
+    // Create JWT token
+    const token = jwt.sign(
+      { 
+        id: req.user.id,
+        email: req.user.email,
+        role: req.user.role 
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: '24h' }
+    );
+
+    res.status(200).json({
+      error: false,
+      message: "Successfully logged in",
+      user: {
+        ...req.user,
+        token
+      },
+      redirectUrl: req.user.redirectUrl
+    });
+  } else {
+    res.status(403).json({ 
+      error: true, 
+      message: "Not Authorized" 
+    });
+  }
+});
+
+router.get("/google/callback",
+  passport.authenticate("google", {
+    failureRedirect: "/login/failed",
+  }),
+  (req, res) => {
+    // Ensure user is authenticated before redirect
     if (req.user) {
-      res.status(200).json({
-        error: false,
-        message: "Successfully logged in",
-        user: req.user,
-        redirectUrl: req.user.redirectUrl 
-      });
+      res.redirect(`https://room-booking-app-frontend.onrender.com/auth/success?token=${req.user.token}`);
     } else {
-      res.status(403).json({ error: true, message: "Not Authorized" });
+      res.redirect('/login/failed');
     }
-  });
-  
-  router.get("/login/failed", (req, res) => {
-    res.status(401).json({
-      error: true,
-      message: "Log in failure",
-    });
-  });
-  
-  router.get(
-    "/google/callback",
-    passport.authenticate("google", {
-      failureRedirect: "/login/failed",
-    }),
-    (req, res) => {
-      // Send user data back to the client
-      res.redirect(`https://room-booking-app-frontend.onrender.com/auth/success`);
-    }
-  );
-  
-  router.get("/google", passport.authenticate("google", ["profile", "email"]));
-  
-  router.get("/logout", (req, res, next) => {
-    req.logout((err) => {
-      if (err) {
-        return next(err);
-      }
-      res.redirect('https://room-booking-app-frontend.onrender.com');
-    });
-  });
-  
-  module.exports = router;
+  }
+);
+
+module.exports = router;
