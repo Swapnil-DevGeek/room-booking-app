@@ -59,6 +59,7 @@ const App = () => {
       });
 
       console.log("Response data : ",response.data);
+      console.log(response.data?.data); 
 
       if (response.data?.user) {
         setUser(response.data.user);
