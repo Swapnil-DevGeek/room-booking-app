@@ -27,23 +27,30 @@ const App = () => {
       const url = `https://room-booking-app-backend.onrender.com/auth/login/success`;
       const { data } = await axios.get(url);
 
-      setUser(data.user);
-      setLoading(false);  // Stop loading when user is set
-
-      // Redirect based on user role
+      // Check if user data is returned
       if (data.user) {
+        setUser(data.user);
+        // Redirect based on user role
         if (data.user.role === 'admin') {
           navigate('/admin');
         } else {
           navigate('/student');
         }
-      }
-    } catch (error) {
-      console.log(error);
-      setLoading(false);  // Stop loading even if there is an error
-      if (error.response && error.response.status === 403) {
+      } else {
+        // Handle case where user is not found
+        console.log("User not found, redirecting to login.");
         navigate('/'); // Redirect to login if unauthorized
       }
+    } catch (error) {
+      console.log("Error fetching user:", error);
+      setLoading(false);  // Stop loading even if there is an error
+      if (error.response && error.response.status === 403) {
+        console.log("Not authorized, redirecting to login.");
+        navigate('/'); // Redirect to login if unauthorized
+      }
+    }
+    finally{
+      setLoading(false);
     }
   };
 
