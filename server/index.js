@@ -7,6 +7,7 @@ const session = require("express-session");
 const nodemailer = require("nodemailer");
 const passportSetup = require("./passport");
 const authRoute = require("./routes/auth");
+const MongoStore = require('connnect-mongo');
 
 const { dbConnect } = require('./utils/dbConnect');
 const { User } = require("./models/User");
@@ -27,26 +28,32 @@ const transporter = nodemailer.createTransport(emailConfig);
 
 const port = process.env.PORT || 8000;
 
-app.use(
-    session({
-        secret: "thunder",
-        resave: false,
-        saveUninitialized: true,
-        cookie: {
-            maxAge: 24 * 60 * 60 * 1000,
-            secure: true, // Set to true if using HTTPS
-            sameSite: 'none' // Important for cross-site cookies
-        },
-    })
-);
+app.use(cors({
+    origin: "https://room-booking-app-frontend.onrender.com",
+    credentials: true ,// This is important for sending cookies
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+}));
+
+app.use(session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    store: MongoStore.create({
+      mongoUrl: process.env.MONGODB_URI,
+      ttl: 24 * 60 * 60 // Session TTL (1 day)
+    }),
+    cookie: {
+      secure: process.env.NODE_ENV === 'production', // true in production
+      httpOnly: true,
+      sameSite: 'none', // required for cross-site cookies
+      maxAge: 24 * 60 * 60 * 1000 // 1 day
+    }
+  }));
 
 app.use(passport.initialize());
 app.use(passport.session());
-app.use(cors({
-    origin: "https://room-booking-app-frontend.onrender.com",
-    methods: "GET,PUT,POST,DELETE",
-    credentials: true // This is important for sending cookies
-}));
+
 app.use("/auth", authRoute);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

@@ -2,27 +2,18 @@ const express = require("express");
 const router = express.Router();
 const passport = require("passport");
 const jwt = require('jsonwebtoken');
-const session = require('express-session'); // Add this import
-
-// Add session middleware configuration
-router.use(session({
-  secret: process.env.SESSION_SECRET,
-  resave: false,
-  saveUninitialized: false,
-  cookie: {
-    secure: process.env.NODE_ENV === 'production',
-    httpOnly: true,
-    maxAge: 24 * 60 * 60 * 1000 // 24 hours
-  }
-}));
 
 router.get("/login/success", (req, res) => {
+  // Debug logging
+  console.log('Session:', req.session);
+  console.log('User:', req.user);
+  console.log('IsAuthenticated:', req.isAuthenticated());
+
   if (req.isAuthenticated() && req.user) {
-    // Create JWT token
     const token = jwt.sign(
       { 
         id: req.user.id,
-        email: req.user.email,
+        email: req.user.emails[0].value,
         role: req.user.role 
       },
       process.env.JWT_SECRET,
@@ -33,10 +24,11 @@ router.get("/login/success", (req, res) => {
       error: false,
       message: "Successfully logged in",
       user: {
-        ...req.user,
+        id: req.user.id,
+        email: req.user.emails[0].value,
+        role: req.user.role,
         token
-      },
-      redirectUrl: req.user.redirectUrl
+      }
     });
   } else {
     res.status(403).json({ 
