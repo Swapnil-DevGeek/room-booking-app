@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const passport = require("passport");
 const jwt = require('jsonwebtoken');
+const session = require('express-session'); // Add this import
 
 // Add session middleware configuration
 router.use(session({
