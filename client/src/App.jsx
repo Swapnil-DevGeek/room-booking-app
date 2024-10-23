@@ -58,6 +58,8 @@ const App = () => {
         },
       });
 
+      console.log("Response data : ",response.data);
+
       if (response.data?.user) {
         setUser(response.data.user);
         if (response.data.user.token) {
